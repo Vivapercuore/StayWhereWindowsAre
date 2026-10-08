@@ -11,13 +11,50 @@ macOS 在重启、系统更新、插拔显示器、睡眠唤醒之后经常把�
 
 另外还有：现代化的设置界面（概览、通用、恢复、应用、布局与快照、权限、诊断、日志）、菜单栏面板、登录时自动启动、手动/自动快照与“恢复前的布局”撤销、按应用排除、自检。
 
-## 安装
+## 构建
 
-需要 Xcode（工程用 [XcodeGen](https://github.com/yonaskolb/XcodeGen) 生成，`project.yml` 是工程的唯一来源）。
+需要 Xcode 和 [XcodeGen](https://github.com/yonaskolb/XcodeGen)。
 
 ```bash
+# 生成工程文件（修改 project.yml 或增删文件后执行）
+xcodegen generate
+
+# 编译 & 安装 & 打开
 scripts/build.sh --install --open
+
+# 在 Xcode 中打开
+open StayWhereWindowsAre.xcodeproj
+
+# 运行测试
+xcodebuild test \
+  -project StayWhereWindowsAre.xcodeproj \
+  -scheme StayWhereWindowsAre \
+  -destination 'platform=macOS'
+
+# 重新生成 App 图标
+swift scripts/make-icon.swift
+
+# 渲染 UI 快照（深色 / 浅色）
+StayWhereWindowsAre.app/Contents/MacOS/StayWhereWindowsAre --snapshot-ui /tmp/ui
+
+# 沙箱模式运行（独立数据目录、不弹授权框、不注册登录项）
+SWWA_SANDBOX_DIR=/tmp/swwa-sandbox StayWhereWindowsAre.app/Contents/MacOS/StayWhereWindowsAre
 ```
+
+## 签名
+
+默认用 ad-hoc 签名。如果有 Apple Development 证书，用它签名就能在重新编译后保留辅助功能授权：
+
+```bash
+# 获取证书信息
+security find-identity -v -p codesigning
+
+# 使用证书构建（替换为实际值）
+DEVELOPMENT_TEAM=XXXXXXXXXX \
+  scripts/build.sh --install --open
+```
+
+证书通过 Xcode → Settings → Accounts → 登录 Apple ID 即可自动创建（免费，不需要付费开发者计划）。
 
 首次启动时：
 
