@@ -1,0 +1,84 @@
+name: StayWhereWindowsAre
+options:
+  bundleIdPrefix: com.vivapercuore
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  developmentLanguage: zh-Hans
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_STRICT_CONCURRENCY: minimal
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+    DEAD_CODE_STRIPPING: YES
+
+targets:
+  StayWhereWindowsAre:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources
+      - path: Resources
+        excludes:
+          - Info.plist
+    info:
+      path: Resources/Info.plist
+      properties:
+        CFBundleName: StayWhereWindowsAre
+        CFBundleDisplayName: StayWhereWindowsAre
+        CFBundleDevelopmentRegion: zh-Hans
+        CFBundleAllowMixedLocalizations: true
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.utilities
+        NSHumanReadableCopyright: "让窗口待在它该在的地方。"
+    entitlements:
+      path: Resources/StayWhereWindowsAre.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vivapercuore.StayWhereWindowsAre
+        PRODUCT_NAME: StayWhereWindowsAre
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        COMBINE_HIDPI_IMAGES: YES
+
+  StayWhereWindowsAreTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests
+      - path: Sources/Core/Models.swift
+      - path: Sources/Core/WindowMatcher.swift
+      - path: Sources/Core/FrameResolver.swift
+      - path: Sources/Core/LayoutStore.swift
+      - path: Sources/Core/RestorePlanner.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vivapercuore.StayWhereWindowsAreTests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  StayWhereWindowsAre:
+    build:
+      targets:
+        StayWhereWindowsAre: all
+        StayWhereWindowsAreTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - StayWhereWindowsAreTests
+    archive:
+      config: Release
